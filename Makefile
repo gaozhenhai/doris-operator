@@ -1,6 +1,6 @@
 
 # Image URL to use all building/pushing image targets
-IMG ?= doris-operator:latest
+IMG ?= 172.22.96.158/system_containers/doris-operator:1.3.0
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
 ENVTEST_K8S_VERSION = 1.26.1
 
@@ -30,7 +30,7 @@ LDFLAGS="-s -X \"main.VERSION=$(VERSION)\" -X \"main.COMMIT=$(LATEST_COMMIT)\" -
 SHELL = /usr/bin/env bash -o pipefail
 .SHELLFLAGS = -ec
 
-.PHONY: all
+.PHONY: all clean
 all: build
 
 ##@ General
@@ -62,11 +62,11 @@ generate: controller-gen ## Generate code containing DeepCopy, DeepCopyInto, and
 
 .PHONY: fmt
 fmt: ## Run go fmt against code.
-	go fmt ./...
+	go1.20 fmt ./...
 
 .PHONY: vet
 vet: ## Run go vet against code.
-	go vet ./...
+	go1.20 vet ./...
 
 .PHONY: test
 test: manifests generate fmt vet envtest ## Run tests.
@@ -75,18 +75,18 @@ test: manifests generate fmt vet envtest ## Run tests.
 ##@ Build
 
 .PHONY: build
-build: manifests generate fmt vet ## Build manager binary.
-	go build -ldflags=$(LDFLAGS) -o bin/dorisoperator cmd/operator/main.go
+build:  ## Build manager binary.
+	CGO_ENABLED=0 GOOS=linux go1.20 build -ldflags=$(LDFLAGS) -v -o bin/dorisoperator cmd/operator/main.go
 
 .PHONY: run
 run: manifests generate fmt vet ## Run a controller from your host.
-	go run -ldflags=$(LDFLAGS)  cmd/operator/main.go
+	go1.20 run -ldflags=$(LDFLAGS)  cmd/operator/main.go
 
 # If you wish built the manager image targeting other platforms you can use the --platform flag.
 # (i.e. docker build --platform linux/arm64 ). However, you must enable docker buildKit for it.
 # More info: https://docs.docker.com/develop/develop-images/build_enhancements/
 .PHONY: docker-build
-docker-build: test ## Build docker image with the manager.
+docker-build: ## Build docker image with the manager.
 	docker build -t ${IMG} .
 
 .PHONY: docker-push
@@ -198,3 +198,5 @@ rm -rf $$TMP_DIR ;\
 }
 endef
 
+clean:
+	rm -rf bin/*

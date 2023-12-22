@@ -14,18 +14,17 @@ dorisOperator:
   enabled: true
   # annotations for doris operator.
   annotations: {}
-  namespaceOverride: "doris"
   image:
-    repository: selectdb/doris.k8s-operator
-    tag: latest
+    repository: 172.22.96.158/system_containers/doris-operator
+    tag: 1.3.0
   replicaCount: 1
   resources:
     limits:
       cpu: "2"
       memory: 4Gi
     requests:
-      cpu: "1"
-      memory: 2Gi
+      cpu: "100m"
+      memory: 256Mi
   # If specified, the pod's nodeSelector，displayName="Map of nodeSelectors to match when scheduling pods on nodes"
   # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
   nodeSelector: {}
