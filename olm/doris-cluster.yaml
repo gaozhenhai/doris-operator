@@ -1,0 +1,55 @@
+apiVersion: doris.selectdb.com/v1
+kind: DorisCluster
+metadata:
+  name: doris
+  namespace: gaozh
+spec:
+  adminUser:
+    name: "root"
+    password: "admin123"
+  feSpec:
+    replicas: 3
+    image: 172.22.96.158/system_containers/doris-fe:2.0.2
+    configMapInfo:
+      configMapName: "fe-config"
+      resolveKey: "fe_custom.conf"
+    service:
+      type: NodePort
+    limits:
+      cpu: 2
+      memory: 4Gi
+    requests:
+      cpu: 100m
+      memory: 4Gi
+    persistentVolumes:
+    - mountPath: /opt/apache-doris/fe/doris-meta
+      name: fe-meta
+      persistentVolumeClaimSpec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
+        storageClassName: openebs-localpv
+  beSpec:
+    replicas: 3
+    image: 172.22.96.158/system_containers/doris-be:2.0.2
+    service:
+      type: ClusterIP
+    limits:
+      cpu: 2
+      memory: 4Gi
+    requests:
+      cpu: 100m
+      memory: 4Gi
+    persistentVolumes:
+    - mountPath: /opt/apache-doris/be/storage
+      name: be-storage
+      persistentVolumeClaimSpec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
+        storageClassName: openebs-localpv
+

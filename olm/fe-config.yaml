@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fe-config
+data:
+  fe_custom.conf: |
+    qe_max_connection = 2048

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: be-config
+data:
+  be_custom.conf: |
+    doris_scanner_queue_size = 2048

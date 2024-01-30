@@ -1,0 +1,368 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  name: doris-operator.v0.0.1
+  annotations:
+    alm-examples: |-
+      [
+        {
+            "apiVersion":"mysql.presslabs.org/v1alpha1",
+            "kind":"MysqlCluster",
+            "metadata":{
+                "name":"mysqlha"
+            },
+            "spec":{
+                "replicas":2,
+                "secretName":"<mysqlha secret name>",
+                "image":"dev-registry.tenxcloud.com/system_containers/percona:5.7.22",
+                "mysqlVersion":"5.7.22",
+                "podSpec":{
+                    "resources":{
+                        "requests":{
+                            "memory":"512M",
+                            "cpu":"200m"
+                        }
+                    }
+                },
+                "mysqlConf":{
+                    "binlog-format":"ROW",
+                    "character-set-server":"utf8mb4",
+                    "collation-server":"utf8mb4_unicode_ci",
+                    "innodb_flush_method":"O_DIRECT",
+                    "innodb_io_capacity":3000,
+                    "innodb_io_capacity_max":6000,
+                    "innodb_lock_wait_timeout":5,
+                    "innodb_open_files":4096,
+                    "innodb_page_size":16384,
+                    "innodb_print_all_deadlocks":1,
+                    "innodb_read_io_threads":8,
+                    "innodb_stats_persistent_sample_pages":64,
+                    "innodb_thread_concurrency":64,
+                    "innodb_write_io_threads":8,
+                    "key-buffer-size":"32M",
+                    "max-heap-table-size":"32M",
+                    "max_allowed_packet":"500M",
+                    "max_connect_errors":1000000,
+                    "max_connections":1000,
+                    "myisam-recover-options":"FORCE,BACKUP",
+                    "open-files-limit":65535,
+                    "relay-log-info-repository":"TABLE",
+                    "relay-log-recovery":"on",
+                    "skip-host-cache":1,
+                    "skip_name_resolve":1,
+                    "sync-binlog":1,
+                    "table-definition-cache":4096,
+                    "table-open-cache":4096,
+                    "thread-cache-size":50,
+                    "tmp-table-size":"32M"
+                },
+                "volumeSpec":{
+                    "persistentVolumeClaim":{
+                        "storageClassName":"openebs-hostpath",
+                        "accessModes":[
+                            "ReadWriteOnce"
+                        ],
+                        "resources":{
+                            "requests":{
+                                "storage":"1Gi"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+      ]
+spec:
+  displayName: Doris Cluser Operator
+  description: |
+    Apache Doris is a high-performance, real-time analytic database based on the MPP architecture and is known for its extreme speed and ease of use. It takes only sub-second response times to return query results under massive amounts of data, and can support not only highly concurrent point query scenarios, but also high-throughput complex analytic scenarios. This brief guide will show you how to download the latest stable version of Doris, install and run it on a single node, including creating databases, data tables, importing data and queries, etc.
+  keywords:
+  - doris
+  - database
+  maintainers:
+  - email: gaozhenhai@gmail.com
+    name: Zhenhhai Gao
+  maturity: ga
+  provider:
+   name: tenxcloud
+   url: www.tenxcloud.com
+  version: 0.0.1
+  links:
+  - name: TenxCloud
+    url: www.tenxcloud.com
+  icon:
+  - base64data: /9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAAA8AAD/4QMuaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJBZG9iZSBYTVAgQ29yZSA2LjAtYzAwNSA3OS4xNjQ1OTAsIDIwMjAvMTIvMDktMTE6NTc6NDQgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCAyMi4xIChNYWNpbnRvc2gpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjY4QkM2NUY1MjVERTExRUM4NDlCQkZFQUQ4QkYyQkFFIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjY4QkM2NUY2MjVERTExRUM4NDlCQkZFQUQ4QkYyQkFFIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6NjhCQzY1RjMyNURFMTFFQzg0OUJCRkVBRDhCRjJCQUUiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6NjhCQzY1RjQyNURFMTFFQzg0OUJCRkVBRDhCRjJCQUUiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7/7gAOQWRvYmUAZMAAAAAB/9sAhAAGBAQEBQQGBQUGCQYFBgkLCAYGCAsMCgoLCgoMEAwMDAwMDBAMDg8QDw4MExMUFBMTHBsbGxwfHx8fHx8fHx8fAQcHBw0MDRgQEBgaFREVGh8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx//wAARCAHlAuQDAREAAhEBAxEB/8QAoQABAAICAwEBAAAAAAAAAAAAAAcIBQYBAgQDCQEBAAMBAQEBAAAAAAAAAAAAAAECAwQFBgcQAQACAQMCAwMHCAkDAwUAAAABAgMRBAUGByExEkFRCGFxsSIyE3OBciMzFDU2N5GhQlJiJDR0FVUXGPCSVIJTJUUWEQEAAgIBBAICAwACAwEAAAAAAQIRAwQhMRIFQTIiE1FhQnEGIzMVJP/aAAwDAQACEQMRAD8AtSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADw8rzOw4zBbNuslaxWNfTrGstNeubTiGO7kU1xm0o85XvRsNZpsMV4tWdPVaHpa/V2+Xzm//suvtWJYye8W/rpMxrHt8Gv/AMyHNP8A2OYZ3hu8fE7jJXBucd63t4ev2MNvrLRGYd/G/wCxa7ziYw3/AGXIbPe4oy7bLXJWY1+rOrzbUms9Xv69tbxms5ehVoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAxfUfPbXhONybzcTpERMUj/Fp4NdOqdlsQ5eXya6aTaVe+e6k5Xn97fcbzLPoiZila+Een2PptOiuuMQ/OuXzdnItm09GP9Me5q5cGke4STWNPd8sCGZ6X6u5Pp7d0tiyTbbWnS9bePh7XPyONXbH9vQ4HstnHt3/ABT5wHP7DmtjTdbW8T6o+tTXxiXzm7TNJxL9A4vKpup5VZNk6QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEMd4edyZuUrw/q1wxEXnT3vc9ZqxXzfF/9i5Uzf9Xwj6I0iI9z1HzbkAAHExExpIMv0t1Tv+nd/XNhtM7e0xGSk+Mae1hyOPG2v9u3gc+/GvmPqn7p/qDY81sabra3ifVH1qa+MS+b3aZ1ziX6FxeVTdTyqybJ0gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOMn2LfNJCJV37g2tbqnJNvPR9Nwv/W/Ovcz/APplgXU80AAABxMRMaSDL9LdU7/p3f1y4bTO3tOmSk+Ph7WHI48bY/t28Dn3418x9U/cBz+x5rYU3e1tExaPrU18Yl83t1TScS/QuLyq7qRarJsnSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATGsTHvBAndXYZNt1X64rMYbUifX7NX0Xr751vgPf6pryM/DU3c8YAAAABxMRMaSDP9E9U7rgOVxRFpnbZ7RSa+yNZcvL48bK/29L1fPtx9kR/mVhsGWmXFTJSYtW0RMTHyvmpjD9FrOYy7oSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATMViZmdIjxmQazuu4XTm35KNhbcVnJPhNotGkT7nRHGvMZwp+yMtjw5sebHXJjtF6WjWLR4wwmMLtT7j9J35zh7fs0RG6x/Wi0+cxHsdnC5H679ezx/c8Gd+r8ftCB748uHLbBmpOPLSfTNbeE+D6KJiesPz+azWcT3gSAAAAAOt/CIvH2qfWr88CJ/lPna/kM296VwZc1vVkiZiZ+SHzfPpFdkxD9C9JunZx4me7bXG9cAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB4+YvanF7q1fP7q3j+RaneET2U+y4pvv8Ad5Jvf11z2ms6z56vq84iHmY6pY7W90su0y04jl764/KmSfKPd4vL5nDz+VXTp2/EpyxZsWbFXJjtF8do1iY8Y0l48xh1tC7idu8XLY7chx8Rj5Cka2n2TWPkejwub4fjb6vnvcenjdHnTpdDF6ZcOW2DPSceWk6TW3hPh7XuxMTGYfETExOJ6SJAAAAHW8TNLRHnMeBCJ7J07Sbe2LpLDN4mLWtPhL572M52y++9BSY40Zbhus9dvtsue3jXHWbTHzOB7Gy/jWZ/h4OA5/acztPv8MxFtZicc+caDn4nLrur5Qyg6wAAAAAAAAHE3pE6TMAeun96APvKf3oBzExMax4wAAAAAAAAADrfJTHHqvaKx75B5r8xxdJ0tusVZ902gHfFyGxy/qs9L/m2iQegAAAAAHHrp74A9dP70Aeun96APXT+9AOQAAAAJmI8wcfeU/vQDmLRPlOoAAAAPnm3W3w/rclcf506A83/ADXE66ftmLX3euAffFvNrl0+7y1vr5aTEg+wAAAAAAAAAAAAAAAAAAAAAAAAAAPFzf7q3X4VvoX1/aEW7Khz/q95+Nb6X1PxDzHFq66TE6WrOtZjw8QSr2s7pZdrkpxHL31p5Y8k+Ue7xeZzOHn8qunVt+JTlizYs2KuTHaL47xrEx4xpLx5jDraF3E7eYuWxX5Dj6xj5Cka2n2TWPkejwubNJ8bfV897j08bo86fdDF6ZcOW2HPSceWk6TS3hPh7XuxMTGYfETExOJ6SJAAAHp4nY59/wAnt9vgj1W9ceuI8fq6s9l4rWZltxtNtmyIqsjw/H4+P2GLbY40itY1j5dHy2y/lOX6Zo1RSkRDD9d8v/x/E+E+OafRpHulRxe05H69f/KM+E5fecPu/wBo29tK2nXLX31S+X4vItpt5VS9wPPbPl9nTPhtEWn7WOZ+tH5EPseLyq7q5hkx1AAAAAAAAKad4O83cbie5fLcVxe+jFtNvbTFj08IhetcomWoT347uR/+yr/Qv4I8nH/fnu3/ANSqeB5Q++3+ITvHi8MfJV/oiUfrk8obX018V/V2wvWOof8ANRH2vu66aptr6ZIsm/t78R/RnV2WNvMzx+aNIn9omKxM/JqzmqcpXw5sWbHXLivGTHeNa3rOsTHyTCqXcAAAHx3e82u0wWz7nLXDhpGtsl5iIj+kEEdx/io6d4Tc5+J4nHfc72kaRuqaTjiWlaZRlBXNfEB3W5LLeY31aba32KRGmkLRTqjyavm7j9Z5sk33HJR65/xNPGFZl6+O7r9xdnaJ2fIxOnl46otSExZIXR/xTdY8Rkp//SWne7eJ+zSPHRn+vonKyXbnvD0p1xx9dzss0bbPadP2XNaIya/MpauFm9qgADpmmYxXmPOIkFM+7HefuNxPcHkOL4zfRi22HT7vHp7GlayiZanPfnu3HnyVY/It4I8ocf8Afvuz/wBUp/Ufrk8ocx377s6xpyddfyH65PKGX4n4lO6+yzVtvt5XNtq/ar6Y10RGv+TyTn2x+JzprqbcY+M39LbPe6RE5ssxFLTPuUmuJWTfizYs2OuTFeL47RrW1Z1iVR2ABr/cDf73YdG8vvNlb0bvBt73w2n2WiPBNe4pDPfru3Wt/wD8lH1ZnWdI97SaSr5Qsd8NXXHVHVGx3WTnM8ZrUiJpMKWrhMTlOCqQHy3e7220299xuclcWDHHqvkvOkRHygrb3Q+Kzb7bcbnh+laW/bcFppG8nS2O0/J8jWtETKEuX7190eRnXf8AJ1jX/wCn6F60VmzDf9w+qtfV/wAlHr/OlbxhHVk9h3m7k7Oa/svKV1r9nx1VtT+E+STu2HxKda5upNnxPUOSNzTdXilJpHvZ2rhMStxts0Z8FMsRpF4idJ+Vms+gAAAAAAAAAAAAAAAAAAAAAAAAPFzf7q3X4VvoX1/aEW7Khz/q95+Nb6X1PxDzHKEut6erSYmYtWdazHh4phCVe1vdLJtMlOI5e+tPLHknyj3eLzOZw8/lV06d3xKcsWbFmxVyY7RfHeNYmPGNJePMYdbQu4nbvHy2K/I8fWMe/rGtp9k1j5Ho8Lm+H42+r573HqI3R50+6GL48uHLbDnpOPNSdJpaNJ8Pa92JiesPiJiYnE9JEgDitcmTJXDhrN8t50iIRnHWSImZxHdM3bLoaOLxRyW7r/nMsaePsh4XO5fnPjHZ9v6X1f6a+dvvLf8APmx4MVsuSdKUjWZ+Z5r37WiIzKIOruety3J3jHP+Tp9mvywl8d7Hl/u2Yj6sKOF6+J5becTvI3O2tMRM/pa++o24/Itpt5VS7wHP7TmNnXPhnS+n1sc+cIfY8Tl13VzDKDqAAAAAAAUC74/zk5385vRWzx9tOhd111zGbjdrkrhvi/tW8pWtOFYhLv8A4h87/wDPxM/2LeLG8j8IHW0z6tlyeCIjzrMonZ/BFWgdX9luu+kom+8wW39I85w1m2jSt4RMNFmnqyROtsG5xz444ma2rMe9bujsnjsV8QvKcLyGDpzqnLOfj881xbHL/wDa/On3Mr1WiVu9tucG5wUz4Lxkw5I1pes6xMMln0ABi+pOo+N6e4nPyfIZIpgwR6pjWImfmTECn/e7v3y3VfI5uG4HLbBw1J9N/ZNrR4T4w2pT+VJlD2Db5JyRg2mK+63N58aV+tfWfat0hHdKXR/w19f9T7XHvvva7Db2mPVjzRNbafMrN4ymKpV2Hwi8NGCv7beMmfT61qz4aq/tlaIYPqb4QuTmuvT27xYJjxmt58z9ko8UL9Ydvuq+j93bbcptb56Vnx3NazNP6WlbRKJhhOK5TkeH3+PleHzzj3GK0WnSZ9Ph7NCKxKMrkdh++W1602NeL5O/o5zb11y2nSIvHyMb0wvEplUSA6bj9Tf5pBQDvR/NrlW9FbOvanoHL171BuOJpeKTgr6tbJtfCsVymP8A8Q9x/wDKx/0qftlPg82/+EHlLYJjab3Fjzf2bT5an7TwRf192S646Fx0z7+P2/b2874Im1ax75XpbJaGiWj1xXNgvNM2OdcdqzppMfMtMIiVtfhc7q5+oNhl6a5CZnecbji0ZbT9qJnTwYWheFgFEgNa7lfwJzf+1v8AQmO6Jfnbf7Gb57fS6mcrWfCP+7N5+bDDZ3Xr2WLZrAK2fFj3G3+w2e16e4zPNKbybU32nnp7mlK5RKr2321vvMWz29JybjNOmOseNrTLaMQzlPnbn4V+V5PaY+S6my1/Z9xWLYtt4xesT72U7JXiEjW+E7t593EVwW9ftn1K+aWv858InGXw3/4jJXBm/sWvOsRK0bZRMNM4X4b+uOmetuK3+6zY91tsOWLzfHrPhCs2mUxC32wiY2eKJjSYrGsKJfcAAAAAAAAAAAAAAAAAAAAAAAAHi5v91br8K30L6/tCLdlQ5/1e8/Gt9L6n4h5jlCQHW9NdJidLVnWsx4eKUJV7W90su1yU4jl7608qZZ8o93i8zmcPP5VdOrb8SnLFlxZsdcmO0XpaNYmPGHjzGHW0LuJ27xcrjvyPH1jHv6xrefZasezR6PC5s0/G31fPe49PG6POnS6GL0y4stsOek481J0mlvCfB7sTExmHxExMTiekuK1yZMlcWKs3yXnSIjz8U9uskRMziO6Xe3fbqm0pTkeRrFs9vGtZ9jxObzfL8a9n2fp/Txrjzv8AZJGTJjw4pveYrSsefseU+kmYiEbdZ9Z33d7bHY20pH27+yYTh8x7L2U2nwo06tYrHz+MjxYjDkSA9nC8zvOI39c+C2mO0xGWvs9I343JtpvmOyZOK5Tb8ls6bnBOtbR4x7kPtNG6NlYtD2DYAAAAABQLvh/OXnfzm9FLNj+Fv+N9188fSbOyYXaYLAPnuNtt9xjtjzY63peNLRaInwkFZviA+Hza49rm6o6Xxxhy4otl5DD5+uP8MNKXwiYVkt68+GdInHuK+UT4WrMNonMM8LgfCz3Jy9Q8Bk4Dc6/f8RSKxe0+NoYXjq0hPCiQFPPid7pZ+Y5yOm+MyTjwbG003sRP2pa0rPdWZQdhwZJvj223pN9xubxWNPGfVb2tbThWOq3nYbsHx/T+ww85zuKM/NZY9VZnxiKz4x4S5pldO9aUpHppWKxHlERpCEuQAYrqLpjiOoOOybDksFcuHJExPhGsa/KCk3evtJu+gOZvutpSZ4LPbTDWPHS0tdcq2hpPTnO73p7n9ny2wyTjmuSttxpOmtInWYXvEzCsS/QPoLq3ZdV9M7TmNp+ry1iJ/OiPFhLRsKB03H6m/wA0goD3o/m1yn5G9FbNx+Ez+YO//Dj6VbkLoMlgHj5jidny3G7jj93SL4NzjtjvExr4WjQiR+fvczpfF0r3B5LhdtWabHBbXDr5Tr4+Eums5UmGc+H/AJfJxfcDHFLen9rvXHPyxqjZHQrK+Nfsx8znXcg1ruV/AnN/7W/0JjuiX523+xm+e30upnK1nwj/ALs3n5sMNndevZYtmsAop8RG43W47i73HnmfusOT9Fq6NfZnZiOzm22WfuXw07yY1pnicVbeUyjZCav0CiIiNIjSI8ohguAATWs+cRIAAAAAAAAAAAAAAAAAAAAAAAAAAPFzf7q3X4VvoX1/aEW7Khz/AKvefjW+l9T8Q8xyhIADrauukx4WrOtZjw8UoSt2s7pZNrkpxHL31p5Y8s+Ue55nM4efyq6dW34lOOLLizYq5MdovS0axMeMS8eYw62i9e9tcXNz+2cd6cPIT9q8+ETD0OJzp19LfV4HtfTRv/KnS7z9DdsK8Vl/a+Tmubcx5aeS3L5/n0r2U9X6SNM+V+tkhZMmPDjm15itKx80aPMfQzMRCNesussu6yW2Oxtpjj7V48phMPmPZeym0+FGn1rFY+fxmR4sRhyJAAJiJjSfKQbN0Hz2TY8h+y5r/wCXv9XHX5ZJep6nlTS/jP1StE6xqh9aAAAAAAoF3w/nLzv5zeilmx/C5/G+6+ePpNnZMLtMFgAHx3m0wbzbZNtuKRfDlrNb1n2xIKC94+lLdNdwuS9NfRstxkn9mr8kuikzKlmR7AdT5OA6/wBrs6TNa8nlilkXjoRK98MF2A685ueE6S5LlInSdthteJTA/PPmeVnk+c3/ADWSdY3d5vOvzuitYjszmUp/DR0Pj6g62nkN9j+847BT1Y4ny9dfJTZMwmsLr0pWlK0rGlaxERHyQxXcgAAA07ut0fsOqOj97td1j9d8GO+XB7/XWusJicIl+feba7jbTudnuKzXNS16+m3npE6OmFFo/hD6tnNxmbpmba22lZy+n3ayx2ViOy0TlZJms6bj9Tf5pBQHvR/NrlPyN6K2bj8Jn8wd/wDhx9KtyF0GSwDi1q1rNrTEVjxmZ8oBRD4gOZxcn3S5LBhmL4cMx6clfKZ+dvrlS0O/w9cHfmev6zSs2nZWrknT2REp2T0KwvbX7MfM51wGtdyv4E5v/a3+hMd0S/O2/wBjN89vpdTOVrPhH/dm8/Nhhs7r17LFs1gFRfi16O3ex5XZ81tsNsmDc2m24yUiZimn96W2uVZhBW03m62m82/Kcdk9G92tovt8keUWheYyrE4We7WfFNsNztdtxPUtLxyNdK5N3OkUmfeymi+U98V1X07ytK22HIYNxNo19NLxMx+RTCWWQAAAAAAAAAAAAAAAAAAAAAAAAAAAPFzf7q3X4VvoX1/aEW7Khz/q95+Nb6X1PxDzHKEgAAOtq66TE6WrOtZj3pQmHsv1/vd1vZ6e3tpyXx19VbfI8nn8aIjzh1aNmeiaXkup1y5ceKk3vMVrXxmZEWtERmUadZdZZN1ktsdjbTHH2rx5SnD5j2XsptPhRp9axWPlnxmUvFiMOUJAAAAd9prHI7S0f2ckT/WlOv71/wCU6bXJ95t6X98Qq++pOYh9RYAAAABQLvh/OXnfzm9FLNj+Fz+N9188fSbOyYXaYLAAAKifGFsa4OX4rNEeOW86tdcolEfQV5x9yOAvH9ncUn+tOyFav0T22T7zBjv/AHqxP9TFdH3f3dTi7ZcxSI/WYZjVMQKCR4cR/wCve37Qp8rgfCFx+KOh7b3w+8nLauvt0ZXnKywCiQAAAHy3WOMm2y0nytSYn8sAoB3h2dNn3Q3+CkRFY8dI8vF0UnopaG8/CFl9Hcrk6+y+20/rZX7rR2XLUS6bj9Tf5pBQHvR/NrlPyN6K2bj8Jn8wd/8Ahx9KtyFu+e6n4TgMGPNyu6x7XHkn00tktFYmfyslmEy92ehcdJt/yuCfki9U4kQ73a+J3jMey3HDdP1vfdZqzSd1Xxr4+HhMNK61cquZMvIb7eTPjuuV3NvH0+NtZltCq43w09qrdL8L/wA7vqTj5TkccRlpaNLRHm5rz1XhN6qQGtdyv4E5v/a3+hMd0S/O2/2M3z2+l1M5Ws+Ef92bz82GGzuvXssWzWAYzqPpzi+oeJ3HF8lhjLtdxWaXiY8dJ9wKhdzvhp6k6bybnk+Dt+08VEzbDtMcTbJEe5tW8RCswhvd7bd4Z9HI7XJsrez7yJpP9a8TmFZh7en+oud4DPO44De2x5Z+1M2mY8PkJjMGUydD/FZ1Dw0xTqqtuQx+Vfu40mIZzrWiVkeg+6vS3WWxxbjY7mmPPliJja3tH3n9Clq4TEtyVSAAAAAAAAAAAAAAAAAAAAAAAAA8XN/urdfhW+hfX9oRbsqHP+r3n41vpfU/EPMcoSAAA63tpNaViZvefTSI8Z1nyTEITn2Z6CycZgjl+Q2/o3+WNIvM+Ppny8Hi8/k+U+MdnZo146yleZiImZnSI85ea6Edde9UzaZ2OyzeP9uI93zkPm/bc/8AxSWjVrFY+WfGUvBiMOwkAAAAB32us8jtKx/ayRH9aU0+9f8AlOm1x/d7elfdEKvvqRiIfUWAAAAAUC74fzl5385vRSzY/hc/jfdfPH0mzsmF2mCwAACoPxf76mfmeMwRaLTivOtfc11wiUT9AY5ydyen8cRrNtxSP607JVq/RPBT7vDSn92sR/UxXaB36285e2HNWiNZphmUwKBR48R/697eOsKfK2/wg76k9JX2nrj1Rktb0e1leMLQsQokAAAB8N9ljFs8+WZ0ilLWmfmgH5+d199Xf9yd/u629dJ8PVHl4OmsdFJlIHwg4vX3K5S2msU22uv5WN46rQuUol03H6m/zSCgPej+bXKfkb0Vs3H4TP5g7/8ADj6VbkLAfED0Fi6s6Ly64rZM2wrbNh9NprMTEfJ5s4WUTx7C9b3w7i2Smelpi1JtMTGkt4qpNmY6b6O6h6o3k8b05incbrF45KzOk6fPK0zgiFqeyPw/bPgsGHk+pOOiOappb1Tf1aWj5NGF7fwmIT3FYrEREaRHlEKLAANa7lfwJzf+1v8AQmO6Jfnbf7Gb57fS6mcrWfCP+7N5+bDDZ3Xr2WLZrAAOLVraNLREx7p8QaV1n2g6H6si2TlePrkzafVtWfR4/khMSjCtHcv4bOq9hu5zdKcbP7BXWcmmTWdP6GkXRhDWfFudjur7Df4rU3WKfTki1fDWPllsrL68ZzHL9O77HynDZ74d3itFq2idYifmRgyvb2X7ibbrLpDaZ77qNxy2DHWOQjT0zF/mc94xK8SkBVIAAAAAAAAAAAAAAAAAAAAAAADxc3+6t1+Fb6F9f2hFuyoc/wCr3n41vpfU/EPMcoSAA63vpNa1ibXvPppWPHxlMQhMPartXaLU5rmsf6WfHHgt4109kvK5vM/zV1adPzKZ61x4scVrEVpWPCPZEQ8h1NF6060jFFtjsberLPhe0e5LwPZey8fwp3R9pabTe9pte3jNp80vnP7lyhIAAAABroDYOh+GvyHK/e3r+ixaWrb5YJej6vjfs2ZntCXIjSNEPsAAAAAAFAu+H85ed/Ob0Us2P4XP433Xzx9Js7JhdpgsAA8/Ib/bcfss283NvRgwVm+S0+yIBQDux1NbqbuDyW4rf7zY0yTO2n2aQ315hnZnvh26Yyc/15h3kV1ji8kXmfcbJjCYhelguwvWXCxzfTO/4uY1jdYppp85A/PPqDi/+L6l5Hhr19NNnkmkRPyOmtonszmEhfDt1zi6X67jHvss4+N3NfuqV9nrt4K3iZTErxY8lcmOuSk61vEWrPyT4sF3YAAAGgd6uvuP6P6M3OfdX9OTe0vt8ER5+q9dNdFq1ySoN95mnFuM+a02y3ta/qtOs+Pi3joznrK1/wAI/SkYeAt1JbHpfdxOP16eM6SyvbK8RhYlml03H6m/zSCgPej+bXKfkb0Vs3H4TP5g7/8ADj6VbkLn3pS9JpeItS0aWrPjEwyWU/8AiZ7S34TmLdV8Tj/y+8tpnwUj6tIjznwa0srMIr7e9a7ro/qTb8xtJ1297x+2T7qRPivsicIqv30f1XxfVPAbbmeNyfebbcV1ifbr7WExhdmkAADWu5X8Cc3/ALW/0JjuiX523+xm+e30upnK1nwj/uzefmww2d169li2awAAABasWiazGsT4TAIy7tdnOnuq+C3FsG0pt+TpWbYsuKsRa0/LMLVtMIwpDv8Aj8vF8tu+Iz+OXZWml9ffDoicqTCWfhY6h3HGdWZuPi8xj32SImuvgz2VTWV0mK4AAAAAAAAAAAAAAAAAAAAAAADxc3+6t1+Fb6F9f2hFuyoc/wCr3n41vpfU/EPMcoSA63vpNaxE2vefTSI8fGfJMQhMPartVaLU5rm8f6WfHHgnxrp7JeVzeb/mrq06fmUz1rjxY4rWIrSseEeyIh5DqaL1p1pGL1bDY29WWfC9o9yXgey9l4/hTuj7S02m95m17eM2nzHzn9y5EgAAAAAPTxfFbzld3XbbWk2jX9Lb3VGujRbbbxqmHgOE2/EbCm2xRrMR9a8+cofZ8TjV00isMkOkAAAAABQLvh/OXnfzm9FLNj+Fv+N9188fSbOyYXaYLAPNveR2Wy2+TcbnNTHixxNrTaYjwgFXe/nxB4eSw5Om+l8n3uLJrj32XymI8vBasImVc4pkpWuDDrl3WTwxx5zaZl0Y6M1zPhm7Zf8A8x05PMbiJje8rSLZKW/ssLWy0iE1qJAVL+KXtXn2XI4upuGwTfFnm1+RmI8p9jSl8KzCvtb2t6MmKZpn21omPZPrq1icq9lqewfxAbPebTD0/wBSZvuuQppXFe3tjyjWWNqrxKxePNiyVi2O9b1mNYmsxKiXYAGudZ9e9O9JcXff8rua46xE+ikTEzNtPLRMRkUi7rdzeR7gdQZM97THE45/y+LX6sTHt0dFa4UtLBdI9Mcn1V1Js+K4zDOb0ZKzuvdGPXx/qVtfHYiH6B9HdM7HpvgNrxWyr6cOGsax5fWmPFhK7NA6bj9Tf5pBQHvR/NrlPyN6K2bj8Jn8wd/+HH0q3IXQZLMT1T07suoeD3fFbulbY9zjtji0xrNZtGmsJicCgncboPedEdSbrhtxW08d6pjBnt/a1b0mZUtDffh47t5OlOdrwnJ5JjjN5aMe2rM/VrMz/UrshNV0cObHmxVy47Ral4ia2idY0lis7gA1ruV/AnN/7W/0JjuiX523+xm+e30upnK1nwj/ALs3n5sMNndevZYtmsA8uHlNhmz5MFM1PvsU6XpMxrAPVExPjE6gAAx/PczsuG4nc8lvbxTb7ek3vMz7IIH55dX8jg5XrjmeV23jtt3mtfFb3xLorXCky3n4beK3G/69w7rDEzj2mT9JMGyeiKwvI52gAAAAAAAAAAAAAAAAAAAAAAADxc3+6t1+Fb6F9f2hFuyoc/6vefjW+l9T8Q8xyhLre+k1rWJte8+mkR4+M+SYhCYe1Xau2tOZ5rH+lnxx4J8a6eyXlczmf5q6tOn5lM9a48WOKxEVpSPCPZEQ8h1NF6060jFFtjsberLPha0e5OHgey9l4/hTuj7602m959V7eM2nzHzn9y5EgAAAAAPXxPE7zlt5G221dYif0tvdUbcfj23W8apd4DgNnw+zrhwxreI+tkn7UofY8TiV01xDKDqAAAAAAAUC74/zk5385vRWzE9C9d8z0Jyt+T4nBTcZsv2q5PKNFrRmERKTv/MPuL/0fa/1sPCVsw+G6+LvuPnpNI4zb4tfbXVMUkzCPequ5fWPVWT173fZNpXx1xY7zFZ198atYrEK+TV8EZMu4jb7bHfNvMs+mLREz6pn3ymZiERGViuxXw58hl3+DqPqvHOKuCYy7PBHjF/zoUvf+ExVarFix4sdceOsUpWNK1rGkRDFd2AB4ea4bY8xx2Xj97jjJt80aWiY1BVDvl8PfI8Tvc3P9M4pybSfrZsUeUe2fCGlb4RMIFrkm2TXHa+23NJ0nJ41tEx8raJieqnZIfRXfnr/AKPwRtdtb/ksMT4Wz2m3h7vFS9c9lolJnG/F/wAlbbRO/wBjix7j21rHgr+pHmwvN/F11tntkw8dx2CNvaNIy+Pq8UzrT5Ig6i6n57qTfX33LbzJb1zr+zWtM0j5oleKxEqzL5dOdO8x1LyWPieE29r5bzpknSYiKz4a6otfCYhdPsn2a2HQ3FUz56+vlstf0150mY1+VjacrJTVSA6bj9Tf5pBQHvR/NrlPyN6K2bj8Jn8wd/8Ahx9KtyF0GSwCKu/vana9b9M2zY/0fIcfFs2GaR43mI+zK9bYRMKQbra73a7jJs91WcPJbaZ09k1mPLRtHWOqk9Fsfhj7uV5biq9Lcpl/zuwrpTNkn619fZrLLZHVaqwbNYBrXcr+BOb/ANrf6Ex3RL87b/YzfPb6XUzlaz4R/wB2bz82GGzuvXssWzWAUa71dQdRcR3V5Hc8fyObDGPN6ow1vNazpPlpq3pETCkyyfBfFb3B46tMGXY4dxhjSLXv4zp71bU69E5b5sPi82n3cft+CmPJ7YrB+qSLOeU+L3YV21p43BXLudPqUtHhMn6pJlDvX/e3rPrqv3G+/wAhtK+H3WG0xW0f4oWrXCJloeHFuM+bHsdjSc27yzFcVaxr4z79FrWwiIXJ+G7tNk6O4TJyW+jXf8lWt70t/Y+ZhMtE1KgAAAAAAAAAAAAAAAAAAAAAAADxc3+6t1+Fb6F9f2hFuyoc/wCr3n41vpfU/EPMcXv6fTWImb3n00iPGdZ8iIEwdqu1VvVTmubx/pZ8ceCfGunsl5XN5n+aurTp+ZTRWuPFjitYitKx4R7IiHkOpovWnWkYYtsdjb1ZZ8LTCYh4HsvZeP4U7o++tNpveZte06zafMfOf3LkSAAAAAA9fE8Vu+W3kbbbVmY1/SW91Rtx+Pbdbxql3gOn9nw+zrhwxrfT62SfOUPseJxK6a4hlB1AAAAAAAAKf92+w3dHnO4/K81xGwrl2W6triyzaI1j5lovMImGp/8Ajf3q/wCm0/8AfC37JR4n/jf3r/6dT/3wftk8X22nw0938uWK7rY0x4v7U+qF42ImrduA+EHNu71/5rc5NvE/amk6q22ZTEYTX0H2M6L6Qw1rh29d5lr9nNnrFrRPvZzK2EiUpSlIpSIrWsaVrHhEQgcgAAA6Z8GHPitizUjJjtGlqWjWJgEO9x/hq6S6pyX3m212G584phiK1mfyJyjCAuoPhp7ncZusleL2kbjYV+zkm3i1nZ0V8Wr5ez/cql5rfjY9Uea8Xg8Xq2HZHutvbRTbcbH9Oitr/wAHikfov4SuW3/oy9VZLbO8TramOdYVvfKYhY/ontt0x0jsMe24/a0nLTz3Nqx95P5WczlZtSAAB0zVm2K1Y85jwBT/ALqdg+6XM9fb/l+J2Ncu0z6fd5JtEeHzLxeYRMNn+Hfs33A6S6t3XJc/tK7fb5cfpiYtE6zqibZMLOKpAJiJjSY1ifOJBWjv38PXM8vzMc90ft4y73dW/wA3h1isVj3wvGyYRhGfEdgu+3Dcpg5XYbCuPdba8ZK+nJERaYnXS2nmibZIhcbojcdTbjpvaZepcFNtzE1/zOHH41iYRbGeiWdQMD15xu+5Po/ldhsKxfebjb3pgrPlNpjwTHcUtn4a+9ExbXjafWmdfrx7ZXnZKvjCw3w59vOrukNjusXUGCuG+SIikVnXyVtbKYjCalUgIX7m/DZwHWPI5uWndZcO+vM2mtfKZTEowg7qH4YO4+wzTXhdvG620ec2t46NZ2K+LUtz2U7m4bzXNxdfVXz9q0XPF88HZruTlyRXFxdfXPkmbwYbX078M3crktzSvL7WNts5nxvFvHRSNifFYXtf8O/SfRV53ltd/vckRM2zRExSf8LO1srJZrWtaxWsaVjwiI8lRyAAAAAAAAAAAAAAAAAAAAAAAADycvjvk4zc0p42nHbSPyLUnrCJ7Kf55y4uQ3WG2K/3ls9orHpnzmX1UdYiXmfKYe1faq0XpzXNY9ck+OPBPjXT2To8rmc3/NXVp0/MporWmOkVrEVpWPCI8oiHkOppHWnWldvFtjsberPPhaY9w8L2XsvD8Kd0d/Wtab3mbXtOs2nz8Uvmv7lyJAAAAAAeviOI3nL7yNttq6xE/pbeyKjbj8e263jVLvA9P7Lh9pXDgrrePtZJ+1P5UPseJxK6a4hlB1AAAAAAAAAAAAAAAAAAAAAAExExpPkD4zs9pM6zhpM+/wBMA748GHH+rpWnzRoDuAAAAAAAAAAAAAAAAAAAAAD52223vOtsdbTPnMxAOK7Ta1nWuKkT74iAfUAAAAAAAAAAAAAAAAAAAAAAAAAAACYiY0nynzBhsvSHAZd7G7ts8X3kf4Y0197WN9ojGVfCGYpSlKxSkRWseERHkyWav1x1J/xuxnDt513N/DT5JHlez5v6qYr9kV62vecmS02vadZtPn4rPk+/WXKAAAAAAB7eH4fd8vu4223rrEfrLeyKjfjca263jVLfAdP7Ph9pXDhjW/8AayT5yh9hxOJXTXEMoOoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAmdImfcCIOu9zfcdRTaZ+pWunp9iYfG+1vNt7BDgAAAAAAevhuJ3vL7yNvtqa1j9Zb2RUbcbj23W8apf4LgdnxG0rgwV1tH2rz5z+VD7Hi8WumuIZIdQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADi0a1mPfAIe62xfddQWpPnMaph8Z7SMbsMKOEAAAAmdAezh+E33M7uMG2r9SJ1yWny9PtG/G4t91sV7Je4LgdnxGzrgwV1tEfWvPnM/Oh9hxeLXTXEMkOoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABHncrhpraOVrGvlSYhMPnPdcbH/kaLE6xqPBcgAATOgPdwnCbzmd5GDBX9HHjktPhGntG/F4tt1sR2S9wvC7TidnXb4K+MfavPnMofZcbjV1V8YZAdAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADz7/AGWHeba+DLWLVtEx4+8Z7dcXriUQdQ9N73htxe00m22tOtZjx80vjeZwraLZ/wAsTFomNfL5JHHEudY94lxNoj2gyXAcDu+Z3UY6VmMMeNrT4eA6eJxLb7Y+Et8Lwmz4naV2+3r5favPnKH2HG41dVfGrIDoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAfHc7Tb7nHOPNSL1mNPGNRS+uLRiYanv+2nE5b2zYr3rkn+z7E5eRt9LrtOYY7/ALZ19X2p0+dGXP8A/Ej+Xq2fbDjotF9xkv6qzrpHknLXX6PXnMy3DY8dtdlijHgpFYiNNYjxlD2dWqtIxEPSNAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH//2Q==
+    mediatype: image/png
+  install:
+    strategy: deployment
+    spec:
+      clusterPermissions:
+      - rules:
+        - apiGroups:
+          - apps
+          resources:
+          - statefulsets
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - apps
+          resources:
+          - statefulsets/status
+          verbs:
+          - get
+        - apiGroups:
+          - autoscaling
+          resources:
+          - horizontalpodautoscalers
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps
+          verbs:
+          - get
+          - list
+          - watch
+        - apiGroups:
+          - ""
+          resources:
+          - endpoints
+          verbs:
+          - get
+          - list
+          - watch
+        - apiGroups:
+          - ""
+          resources:
+          - pods
+          - persistentvolumeclaims
+          verbs:
+          - get
+          - list
+          - watch
+        - apiGroups:
+          - ""
+          resources:
+          - secrets
+          verbs:
+          - get
+          - list
+          - watch
+        - apiGroups:
+          - ""
+          resources:
+          - serviceaccounts
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - ""
+          resources:
+          - services
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - doris.selectdb.com
+          resources:
+          - dorisclusters
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - doris.selectdb.com
+          resources:
+          - dorisclusters/finalizers
+          verbs:
+          - update
+        - apiGroups:
+          - doris.selectdb.com
+          resources:
+          - dorisclusters/status
+          verbs:
+          - get
+          - patch
+          - update
+        - apiGroups:
+          - rbac.authorization.k8s.io
+          resources:
+          - clusterrolebindings
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - rbac.authorization.k8s.io
+          resources:
+          - rolebindings
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - policy
+          - extensions
+          resourceNames:
+          - default
+          resources:
+          - podsecuritypolicies
+          verbs:
+          - use
+        serviceAccountName: doris-operator
+      permissions:
+      - rules:
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps
+          verbs:
+          - get
+          - list
+          - watch
+          - create
+          - update
+          - patch
+          - delete
+        - apiGroups:
+          - coordination.k8s.io
+          resources:
+          - leases
+          verbs:
+          - get
+          - list
+          - watch
+          - create
+          - update
+          - patch
+          - delete
+        - apiGroups:
+          - ""
+          resources:
+          - events
+          verbs:
+          - create
+          - patch
+        serviceAccountName: doris-operator
+      deployments:
+      - name: doris-operator
+        spec:
+          replicas: 1
+          strategy:
+            type: RollingUpdate
+          selector:
+            matchLabels:
+              app: doris-operator
+          template:
+            metadata:
+              labels:
+                app: doris-operator
+            spec:
+              serviceAccountName: doris-operator
+              containers:
+              - args:
+                - --leader-elect
+                command:
+                - /dorisoperator
+                env:
+                - name: WATCH_NAMESPACE
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.namespace
+                image: dev-registry.tenxcloud.com/system_containers/doris-operator:5.7.0
+                imagePullPolicy: Always
+                livenessProbe:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /healthz
+                    port: 8081
+                    scheme: HTTP
+                  initialDelaySeconds: 15
+                  periodSeconds: 20
+                  successThreshold: 1
+                  timeoutSeconds: 1
+                name: dorisoperator
+                readinessProbe:
+                  failureThreshold: 3
+                  httpGet:
+                    path: /readyz
+                    port: 8081
+                    scheme: HTTP
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
+                  successThreshold: 1
+                  timeoutSeconds: 1
+                resources:
+                  limits:
+                    cpu: 100m
+                    memory: 256Mi
+                  requests:
+                    cpu: 100m
+                    memory: 256Mi
+                securityContext:
+                  allowPrivilegeEscalation: false
+                  capabilities:
+                    drop:
+                    - ALL
+                volumeMounts:
+                - mountPath: /etc/localtime
+                  name: localtime
+              volumes:
+              - hostPath:
+                  path: /etc/localtime
+                  type: ""
+                name: localtime
+  installModes:
+  - type: OwnNamespace
+    supported: true
+  - type: SingleNamespace
+    supported: true
+  - type: MultiNamespace
+    supported: true
+  - type: AllNamespaces
+    supported: true
+  customresourcedefinitions:
+    owned:
+    - name: dorisclusters.doris.selectdb.com
+      version: v1
+      kind: DorisCluster
+      displayName: DorisCluster
+      description: A running doris cluster instance
+      resources:
+      - kind: StatefulSet
+        version: apps/v1

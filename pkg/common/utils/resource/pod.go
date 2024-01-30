@@ -1,12 +1,13 @@
 package resource
 
 import (
+	"strconv"
+
 	v1 "github.com/selectdb/doris-operator/api/doris/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/klog/v2"
-	"strconv"
 )
 
 const (
@@ -220,7 +221,7 @@ func NewBaseMainContainer(dcr *v1.DorisCluster, config map[string]interface{}, c
 		Ports:           []corev1.ContainerPort{},
 		Env:             envs,
 		VolumeMounts:    volumeMounts,
-		ImagePullPolicy: corev1.PullIfNotPresent,
+		ImagePullPolicy: corev1.PullAlways,
 		Resources:       spec.ResourceRequirements,
 	}
 

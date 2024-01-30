@@ -1,6 +1,6 @@
 
 # Image URL to use all building/pushing image targets
-IMG ?= 172.22.96.158/system_containers/doris-operator:1.3.0
+IMG ?= 172.22.96.158/system_containers/doris-operator:5.7.0
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
 ENVTEST_K8S_VERSION = 1.26.1
 

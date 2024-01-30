@@ -1,0 +1,19 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: doris-operator-daas-registry-doris
+  namespace: gaozh
+spec:
+  channel: stable
+  config:
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+  installPlanApproval: Automatic
+  name: doris-operator
+  source: daas-registry-doris
+  sourceNamespace: gaozh

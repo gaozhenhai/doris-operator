@@ -1,0 +1,12 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  labels:
+    source-ns: gaozh
+  name: daas-registry-doris
+  namespace: gaozh
+spec:
+  displayName: built-in doris registry
+  image: 172.22.96.158/system_containers/doris-registry:v5.7
+  publisher: system admin
+  sourceType: grpc
