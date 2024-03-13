@@ -17,10 +17,10 @@ spec:
       type: NodePort
     limits:
       cpu: 2
-      memory: 4Gi
+      memory: 2Gi
     requests:
       cpu: 100m
-      memory: 4Gi
+      memory: 2Gi
     persistentVolumes:
     - mountPath: /opt/apache-doris/fe/doris-meta
       name: fe-meta
@@ -32,16 +32,23 @@ spec:
             storage: 10Gi
         storageClassName: openebs-localpv
   beSpec:
+    systemInitialization:
+      initImage: 172.22.96.158/system_containers/alpine:3.11
+      command: ["/bin/sh"]
+      args: ["-c", "sysctl -w vm.max_map_count=2000000 && swapoff -a"]
     replicas: 3
     image: 172.22.96.158/system_containers/doris-be:2.0.2
+    configMapInfo:
+      configMapName: "be-config"
+      resolveKey: "be_custom.conf"
     service:
       type: ClusterIP
     limits:
       cpu: 2
-      memory: 4Gi
+      memory: 2Gi
     requests:
       cpu: 100m
-      memory: 4Gi
+      memory: 2Gi
     persistentVolumes:
     - mountPath: /opt/apache-doris/be/storage
       name: be-storage

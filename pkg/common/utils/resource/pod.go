@@ -95,7 +95,7 @@ func NewPodTemplateSpec(dcr *v1.DorisCluster, componentType v1.ComponentType) co
 
 	if si != nil {
 		initContainer := newBaseInitContainer("init", si)
-		pts.Spec.InitContainers = append(pts.Spec.InitContainers, initContainer)
+		pts.Spec.InitContainers = []corev1.Container{initContainer}
 	}
 
 	pts.Spec.Affinity = constructAffinity(dcrAffinity, componentType)
