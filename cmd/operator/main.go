@@ -19,10 +19,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	dorisv1 "github.com/selectdb/doris-operator/api/doris/v1"
-	"github.com/selectdb/doris-operator/pkg/controller"
 	"io"
 	"os"
+
+	dorisv1 "github.com/selectdb/doris-operator/api/doris/v1"
+	"github.com/selectdb/doris-operator/pkg/controller"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
@@ -88,8 +89,10 @@ func main() {
 
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
 
+	ns, _ := os.LookupEnv("WATCH_NAMESPACE")
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:                 scheme,
+		Namespace:              ns,
 		MetricsBindAddress:     metricsAddr,
 		Port:                   9443,
 		HealthProbeBindAddress: probeAddr,

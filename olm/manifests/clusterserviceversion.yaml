@@ -6,67 +6,88 @@ metadata:
     alm-examples: |-
       [
         {
-            "apiVersion":"mysql.presslabs.org/v1alpha1",
-            "kind":"MysqlCluster",
-            "metadata":{
-                "name":"mysqlha"
+            "apiVersion": "doris.selectdb.com/v1",
+            "kind": "DorisCluster",
+            "metadata": {
+                "name": "doris"
             },
-            "spec":{
-                "replicas":2,
-                "secretName":"<mysqlha secret name>",
-                "image":"dev-registry.tenxcloud.com/system_containers/percona:5.7.22",
-                "mysqlVersion":"5.7.22",
-                "podSpec":{
-                    "resources":{
-                        "requests":{
-                            "memory":"512M",
-                            "cpu":"200m"
-                        }
-                    }
+            "spec": {
+                "adminUser": {
+                    "name": "root",
+                    "password": "admin123"
                 },
-                "mysqlConf":{
-                    "binlog-format":"ROW",
-                    "character-set-server":"utf8mb4",
-                    "collation-server":"utf8mb4_unicode_ci",
-                    "innodb_flush_method":"O_DIRECT",
-                    "innodb_io_capacity":3000,
-                    "innodb_io_capacity_max":6000,
-                    "innodb_lock_wait_timeout":5,
-                    "innodb_open_files":4096,
-                    "innodb_page_size":16384,
-                    "innodb_print_all_deadlocks":1,
-                    "innodb_read_io_threads":8,
-                    "innodb_stats_persistent_sample_pages":64,
-                    "innodb_thread_concurrency":64,
-                    "innodb_write_io_threads":8,
-                    "key-buffer-size":"32M",
-                    "max-heap-table-size":"32M",
-                    "max_allowed_packet":"500M",
-                    "max_connect_errors":1000000,
-                    "max_connections":1000,
-                    "myisam-recover-options":"FORCE,BACKUP",
-                    "open-files-limit":65535,
-                    "relay-log-info-repository":"TABLE",
-                    "relay-log-recovery":"on",
-                    "skip-host-cache":1,
-                    "skip_name_resolve":1,
-                    "sync-binlog":1,
-                    "table-definition-cache":4096,
-                    "table-open-cache":4096,
-                    "thread-cache-size":50,
-                    "tmp-table-size":"32M"
-                },
-                "volumeSpec":{
-                    "persistentVolumeClaim":{
-                        "storageClassName":"openebs-hostpath",
-                        "accessModes":[
-                            "ReadWriteOnce"
-                        ],
-                        "resources":{
-                            "requests":{
-                                "storage":"1Gi"
+                "feSpec": {
+                    "replicas": 3,
+                    "image": "dev-registry.tenxcloud.com/system_containers/doris-fe:2.0.2",
+                    "service": {
+                        "type": "ClusterIP"
+                    },
+                    "limits": {
+                        "cpu": 1,
+                        "memory": "2Gi"
+                    },
+                    "requests": {
+                        "cpu": "100m",
+                        "memory": "2Gi"
+                    },
+                    "persistentVolumes": [
+                        {
+                            "mountPath": "/opt/apache-doris/fe/doris-meta",
+                            "name": "fe-meta",
+                            "persistentVolumeClaimSpec": {
+                                "accessModes": [
+                                    "ReadWriteOnce"
+                                ],
+                                "resources": {
+                                    "requests": {
+                                        "storage": "10Gi"
+                                    }
+                                },
+                                "storageClassName": "openebs-hostpath"
                             }
                         }
+                    ]
+                },
+                "beSpec": {
+                    "replicas": 3,
+                    "image": "dev-registry.tenxcloud.com/system_containers/doris-be:2.0.2",
+                    "service": {
+                        "type": "ClusterIP"
+                    },
+                    "limits": {
+                        "cpu": 1,
+                        "memory": "2Gi"
+                    },
+                    "requests": {
+                        "cpu": "100m",
+                        "memory": "2Gi"
+                    },
+                    "persistentVolumes": [
+                        {
+                            "mountPath": "/opt/apache-doris/be/storage",
+                            "name": "be-storage",
+                            "persistentVolumeClaimSpec": {
+                                "accessModes": [
+                                    "ReadWriteOnce"
+                                ],
+                                "resources": {
+                                    "requests": {
+                                        "storage": "10Gi"
+                                    }
+                                },
+                                "storageClassName": "openebs-hostpath"
+                            }
+                        }
+                    ],
+                    "systemInitialization": {
+                        "initImage": "dev-registry.tenxcloud.com/system_containers/alpine:3.16",
+                        "command": [
+                            "/bin/sh"
+                        ],
+                        "args": [
+                            "-c",
+                            "sysctl -w vm.max_map_count=2000000 && swapoff -a"
+                        ]
                     }
                 }
             }
