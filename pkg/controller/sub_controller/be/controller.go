@@ -2,7 +2,9 @@ package be
 
 import (
 	"context"
-	"github.com/selectdb/doris-operator/api/doris/v1"
+	"time"
+
+	v1 "github.com/selectdb/doris-operator/api/doris/v1"
 	"github.com/selectdb/doris-operator/pkg/common/utils/k8s"
 	"github.com/selectdb/doris-operator/pkg/common/utils/resource"
 	"github.com/selectdb/doris-operator/pkg/controller/sub_controller"
@@ -11,7 +13,6 @@ import (
 	"k8s.io/client-go/tools/record"
 	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"time"
 )
 
 type Controller struct {
@@ -117,11 +118,12 @@ func (be *Controller) UpdateComponentStatus(cluster *v1.DorisCluster) error {
 
 func (be *Controller) ClearResources(ctx context.Context, dcr *v1.DorisCluster) (bool, error) {
 	//if the doris is not have be.
-	if dcr.Status.BEStatus == nil {
-		return true, nil
-	}
+	/*
+		if dcr.Status.BEStatus == nil {
+			return true, nil
+		}*/
 
-	if dcr.Spec.BeSpec == nil {
+	if dcr.Spec.BeSpec == nil || !dcr.DeletionTimestamp.IsZero() {
 		return be.ClearCommonResources(ctx, dcr, v1.Component_BE)
 	}
 

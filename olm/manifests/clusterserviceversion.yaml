@@ -169,10 +169,19 @@ spec:
           - ""
           resources:
           - pods
+          verbs:
+          - get
+          - list
+          - watch
+        - apiGroups:
+          - ""
+          resources:
           - persistentvolumeclaims
           verbs:
           - get
           - list
+          - delete
+          - deletecollection
           - watch
         - apiGroups:
           - ""

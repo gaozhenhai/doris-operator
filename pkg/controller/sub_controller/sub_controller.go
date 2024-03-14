@@ -3,6 +3,9 @@ package sub_controller
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
+
 	dorisv1 "github.com/selectdb/doris-operator/api/doris/v1"
 	"github.com/selectdb/doris-operator/pkg/common/utils/k8s"
 	"github.com/selectdb/doris-operator/pkg/common/utils/resource"
@@ -13,8 +16,6 @@ import (
 	"k8s.io/client-go/tools/record"
 	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"strconv"
-	"strings"
 )
 
 type SubController interface {
@@ -114,6 +115,10 @@ func (d *SubDefaultController) ClearCommonResources(ctx context.Context, dcr *do
 	}
 	if err := k8s.DeleteService(ctx, d.K8sclient, dcr.Namespace, externalServiceName); err != nil && !apierrors.IsNotFound(err) {
 		klog.Errorf("SubDefaultController ClearResources delete external service, namespace=%s, name=%s,error=%s.", dcr.Namespace, externalServiceName, err.Error())
+		return false, err
+	}
+	if err := k8s.DeletePersistentVolumeClaims(ctx, d.K8sclient, dcr, componentType); err != nil {
+		klog.Errorf("SubDefaultController ClearResources delete all PersistentVolumeClaim, namespace=%s, name=%s,error=%s.", dcr.Namespace, dcr.Name, err.Error())
 		return false, err
 	}
 

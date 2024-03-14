@@ -18,7 +18,12 @@ package controller
 
 import (
 	"context"
+	"os"
+	"time"
+
 	dorisv1 "github.com/selectdb/doris-operator/api/doris/v1"
+	"github.com/selectdb/doris-operator/pkg/common/utils/k8s"
+
 	"github.com/selectdb/doris-operator/pkg/controller/sub_controller"
 	"github.com/selectdb/doris-operator/pkg/controller/sub_controller/be"
 	bk "github.com/selectdb/doris-operator/pkg/controller/sub_controller/broker"
@@ -30,14 +35,12 @@ import (
 	"k8s.io/client-go/tools/record"
 	"k8s.io/client-go/util/retry"
 	"k8s.io/klog/v2"
-	"os"
 	controller_builder "sigs.k8s.io/controller-runtime/pkg/builder"
 	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
-	"time"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -100,11 +103,22 @@ func (r *DorisClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request
 		return requeueIfError(err)
 	}
 
-	dcr := edcr.DeepCopy()
-	if !dcr.DeletionTimestamp.IsZero() {
-		r.resourceClean(ctx, dcr)
+	if edcr.DeletionTimestamp.IsZero() {
+		if err := k8s.AddFinalizers(ctx, r.Client, &edcr); err != nil {
+			klog.Error(err, " add finalizer failed ", req.NamespacedName, " name ", req.Name)
+			return requeueIfError(err)
+		}
+	} else {
+		r.resourceClean(ctx, &edcr)
+		if err := k8s.RemoveFinalizers(ctx, r.Client, &edcr); err != nil {
+			klog.Error(err, " remove finalizer failed ", req.NamespacedName, " name ", req.Name)
+			return requeueIfError(err)
+		}
 		return ctrl.Result{}, nil
 	}
+
+	r.Client.Get(ctx, req.NamespacedName, &edcr)
+	dcr := edcr.DeepCopy()
 
 	//subControllers reconcile for create or update sub resource.
 	for _, rc := range r.Scs {

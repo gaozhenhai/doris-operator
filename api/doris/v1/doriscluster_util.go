@@ -1,9 +1,10 @@
 package v1
 
 import (
+	"strings"
+
 	"github.com/selectdb/doris-operator/pkg/common/utils/metadata"
 	"k8s.io/klog/v2"
-	"strings"
 )
 
 // the annotation key
@@ -27,6 +28,8 @@ const (
 	OwnerReference string = "app.doris.ownerreference/name"
 
 	ServiceRoleForCluster string = "app.doris.service/role"
+
+	DorisFinalizer string = "finalizer.app.doris.cluster"
 )
 
 type ServiceRole string

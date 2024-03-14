@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	dorisv1 "github.com/selectdb/doris-operator/api/doris/v1"
 	appv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/autoscaling/v1"
@@ -183,4 +184,38 @@ func GetConfigMap(ctx context.Context, k8scient client.Client, namespace, name s
 	}
 
 	return &configMap, nil
+}
+
+// DeletePersistentVolumeClaim delete all PersistentVolumeClaim.
+func DeletePersistentVolumeClaims(ctx context.Context, k8sclient client.Client, dcr *dorisv1.DorisCluster, componentType dorisv1.ComponentType) error {
+	selector := dorisv1.GenerateStatefulSetSelector(dcr, componentType)
+	return k8sclient.DeleteAllOf(ctx, &corev1.PersistentVolumeClaim{}, client.InNamespace(dcr.Namespace), client.MatchingLabels(selector))
+}
+
+func AddFinalizers(ctx context.Context, k8sclient client.Client, dcr *dorisv1.DorisCluster) error {
+	for _, finalizer := range dcr.Finalizers {
+		if finalizer == dorisv1.DorisFinalizer {
+			return nil
+		}
+	}
+
+	dcr.Finalizers = append(dcr.Finalizers, dorisv1.DorisFinalizer)
+	return PatchClientObject(ctx, k8sclient, dcr)
+}
+
+func RemoveFinalizers(ctx context.Context, k8sclient client.Client, dcr *dorisv1.DorisCluster) error {
+	currentFinalizers := []string{}
+	for _, finalizer := range dcr.Finalizers {
+		if finalizer == dorisv1.DorisFinalizer {
+			continue
+		}
+		currentFinalizers = append(currentFinalizers, finalizer)
+	}
+
+	if len(dcr.Finalizers) > 0 {
+		dcr.Finalizers = currentFinalizers
+		UpdateClientObject(ctx, k8sclient, dcr)
+	}
+
+	return nil
 }
